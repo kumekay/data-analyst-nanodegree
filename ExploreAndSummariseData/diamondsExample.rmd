@@ -1,0 +1,668 @@
+Diamonds Exploration by Chris Saden
+========================================================
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Load all of the packages that you end up using
+# in your analysis in this code chunk.
+
+# Notice that the parameter "echo" was set to FALSE for this code chunk.
+# This prevents the code from displaying in the knitted HTML output.
+# You should set echo=FALSE for all code chunks in your file.
+
+library(ggplot2)
+library(gridExtra)
+library(psych)
+library(dplyr)
+library(scales)
+library(memisc)
+theme_set(theme_minimal(20))
+```
+
+```{r echo=FALSE, Load_the_Data}
+data(diamonds)
+```
+
+# Univariate Plots Section
+```{r echo=FALSE, Summary}
+# Summarize the data set
+dim(diamonds)
+names(diamonds)
+str(diamonds)
+levels(diamonds$cut)
+levels(diamonds$color)
+levels(diamonds$clarity)
+summary(diamonds)
+```
+
+Most diamonds are of ideal cut.
+The median carat size is 0.7.
+Most diamonds have a color of G or better.
+About 75% of diamonds have carat weights less than 1.
+The median price for a diamonds $2401 and the max price is $18,823.
+
+```{r echo=FALSE, Price}
+qplot(price, data = diamonds)
+qplot(price, data = diamonds, binwidth = 0.01) +
+  scale_x_log10(breaks = c(100, 500, 1000, 1500, 2000, 5000, 10000, 15000))
+```
+
+Transformed the long tail data to better understand the distribution of price. The tranformed price distribution appears bimodal with the price peaking around 800 or so and again at 5000 or so. Why is there a gap at 1500? Are there really no diamonds with that price? I wonder what this plot looks like across the categorical variables of cut, color, and clarity.
+
+```{r echo=FALSE, Carat}
+qplot(carat, data = diamonds, binwidth = .1) +
+  coord_cartesian(xlim = c(0, 2))
+qplot(carat, data = diamonds, binwidth = .01) +
+  coord_cartesian(xlim = c(0, 2))
+```
+
+Some carat weights occur more often than other carat weights. I wonder how carat is connected to price, and I wonder if the carat values are specific to certain cuts of diamonds. For now, I'm going to see which carat weights are most common.
+
+```{r echo=FALSE, Zero_Value_Carat}
+table(diamonds$carat == 0)
+summary(diamonds$carat)
+```
+
+No diamonds have a carat value of 0. The lightest diamond is 0.2 carat and the heaviest diamond is 5.0100
+
+```{r echo=FALSE, Table_Carat_Weights}
+sort(table(diamonds$carat), decreasing = T)
+```
+
+```{r echo=FALSE, Depth}
+qplot(depth, data = diamonds, binwidth = .1) +
+  coord_cartesian(xlim = c(55, 70))
+summary(diamonds$depth)
+```
+
+Most diamonds have a depth between 60 mm and 65 mm: median 61.8 mm and mean 61.75 mm.
+
+```{r echo=FALSE, Table}
+qplot(table, data = diamonds) +
+  coord_cartesian(xlim = c(50, 70))
+qplot(table, data = diamonds, binwidth = 0.1) +
+  coord_cartesian(xlim = c(50, 70))
+summary(diamonds$table)
+```
+
+Setting the binwidth indicates that most table values are integers. Most diamonds have a table between 55 mm and 60 mm.
+
+```{r echo=FALSE, Table_Table_Values}
+sort(table(diamonds$table), decreasing = T)
+```
+
+Again, I wonder if this has anything to do with the cut of a diamond. Cut is the quality of a diamons may influence carat weight and is responsible for making a diamond sparkle. There's likely to be strong relationships among carat, table, cut, and price.
+
+```{r echo=FALSE, X_Dim}
+qplot(x, data = diamonds, binwidth = 0.1)
+qplot(x, data = diamonds, geom = 'freqpoly', binwidth = 0.1)
+table(diamonds$x == 0)
+```
+
+Most diamonds have an x dimension between 4 mm and 7 mm. 8 diamonds have a x dimension of 0.
+
+```{r echo=FALSE, Y_Dim}
+qplot(y, data = diamonds, binwidth = 0.1)
+qplot(y, data = diamonds, binwidth = 0.1) +
+  coord_cartesian(xlim = c(0, 10))
+table(diamonds$y == 0)
+```
+
+Again, most diamonds have a y dimension between 4 mm and 7 mm. There are some outliers for the y dimension. 7 diamonds have a y dimension of 0.
+
+```{r echo=FALSE, Z_Dim}
+qplot(z, data = diamonds, binwidth = 0.1)
+qplot(z, data = diamonds, binwidth = 0.1) +
+  coord_cartesian(xlim = c(0, 7))
+table(diamonds$z == 0)
+```
+
+Most diamonds have a z dimension between 2 mm and 6 mm. There are some outliers for the z dimension too. 20 diamonds have a z dimension of 0.
+
+```{r echo=FALSE, Diamonds_Missing_Dimensions}
+# using filter and anti_join in dlyr
+missingDim <- filter(diamonds, x==0 | y==0 | z==0)
+missingDim
+summary(missingDim$price)
+summary(anti_join(diamonds, missingDim)$price)
+```
+
+The above diamonds have missing dimension values. If and only if x or y dimensions are 0, then the z dimension is 0.
+
+The diamonds in this subset tend to be very expensive or fall in the third quartile of the entire diamonds data set. Other variables such as carat, depth, table, and price are reported so I'll assume those values can be trusted.
+
+```{r echo=FALSE, Price_Hist_Best_Diamonds}
+bestDiamonds <- subset(diamonds, (color == 'D' | color == 'E') &
+             (clarity == 'IF' | clarity == 'VVS1') &
+             (cut == 'Ideal'| cut == 'Premium'))
+qplot(x = price, data = bestDiamonds)
+summary(bestDiamonds$price)
+summary(bestDiamonds$price/bestDiamonds$carat)
+```
+
+I'm going to compare the worst diamonds across the same variables.
+
+```{r echo=FALSE, Price_Hist_Worst_Diamonds}
+worstDiamonds <- subset(diamonds, (color == 'J' | color == 'I') &
+             (clarity == 'I1' | clarity == 'SI2') &
+             (cut == 'Fair'| cut == 'Good'))
+qplot(x = price, data = worstDiamonds)
+summary(worstDiamonds$price)
+summary(worstDiamonds$price/worstDiamonds$carat)
+```
+
+This doesn't add much to my thoughts already. Later in my analysis, I'm going create density plots that are similar to the price histograms earlier to examine the price for each level of cut, color, and clarity.
+
+What about the volume of a diamond? Does it have any relationships with price and other variables in the data set? I'm going to use a rough approximation of volume by using x * y * z to approximate a diamond as if it were a rectangular prism, basically a box.
+
+```{r echo=FALSE, Volume_Variable}
+diamonds <- transform(diamonds, volume = x * y * z)
+table(diamonds$volume == 0)
+noVolume <- subset(diamonds, volume == 0)
+noVolume
+table(diamonds$carat == 0)
+```
+
+Some diamonds have a volume of 0 since they have at least one dimension with a value of 0. I'm going to use the average density of diamonds to compute the volume of a diamond instead of using the dimensions x, y, and z to compute the volume.
+
+I can convert carat to grams and then divide by the density to get the volume of a diamond.
+
+1 carat is equivalent to 2 grams
+
+Using Google, I found that diamond density is typically between 3.15 and 3.53 g/cm^3 with pure diamonds having a density close to 3.52 g/cm^3. I'm going to use the average density 3.34 g/cm^3 to estimate the volume of the diamonds.
+
+```{r echo=FALSE, Better_Volumes}
+# create a volume from carat and density of diamonds
+diamonds <- transform(diamonds, volume = carat * 2 / 3.34)
+summary(diamonds$volume)
+```
+
+```{r echo=FALSE, Better_Volume_Hist}
+qplot(volume, data=diamonds, binwidth=0.1)
+qplot(volume, data=diamonds, binwidth=0.01)
+qplot(volume, data=diamonds, binwidth=0.01) + 
+    scale_x_log10()
+```
+
+The histogram of volume is right skewed so I'm going to transform the data using a log transform. There are some volumes that are more common than others.
+
+```{r echo=FALSE, Common_Volumes}
+sort(table(round(diamonds$volume, 3)), decreasing=T)[1:20]
+```
+
+# Univariate Analysis
+
+### What is the structure of your dataset?
+There are 53,940 diamonds in the dataset with 10 features (carat, cut, color, clarity, depth, table, price, x, y, and z). The variables cut, color, and clarity, are ordered factor variables with the following levels.
+
+(worst) ----------------> (best)  
+**cut**: Fair, Good, Very Good, Premium, Ideal  
+**color**: J, I, H, G, F, E, D  
+**clarity**: I1 SI2, SI1, VS2, VS1, VVS2, VVS1, IF  
+
+Other observations:  
+Most diamonds are of ideal cut.  
+The median carat size is 0.7.  
+Most diamonds have a color of G or better.  
+About 75% of diamonds have carat weights less than 1.  
+The median price for a diamonds $2401 and the max price is $18,823.  
+
+### What is/are the main feature(s) of interest in your dataset?
+The main features in the data set are carat and price. I'd like to determine which features are best for predicting the price of a diamond. I suspect carat and some combination of the other variables can be used to build a predictive model to price diamonds.
+
+### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
+Carat, color, cut, clarity, depth, and table likely contribute to the price of a diamond. I think carat (the weight of a diamond) and clarity probably contribute most to the price after researching information on diamond prices.
+
+### Did you create any new variables from existing variables in the dataset?
+I created a variable for the volume of diamonds using the density of diamonds and the carat weight of diamonds. This arose in the bivariate section of my analysis when I explored how the price of a diamond varied with its volume. At first volume was calculated by multiplying the dimensions x, y, and z together. However, the volume was a crude approximation since the diamonds were assumed to be rectangular prisms in the initial calculation.
+
+To better approximate the volume, I used the average density of diamonds. 1 carat is equivalent to 2 grams, and the average diamond density is between 3.15 and 3.53 g/cm^3 with pure diamonds having a density close to 3.52 g/cm^3. I used an average density of 3.34 g/cm^3 to estimate the volume of the diamonds.
+
+### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
+
+I log-transformed the right skewed price and volume distributions. The tranformed distribution for price appears bimodal with the price peaking around $800 or so and again around $5000. There's no diamonds priced at $1500.
+
+When first calculating the volume using x, y, and z, some volumes were 0 or could not be calculated because data was missing. Additionally, some values for the dimensions x, y, and z seemed too large. In the subset called noVolume, all dimensions (x, y, and z) are missing or the z value is 0. The diamonds in this subset tend to be very expensive or fall in the third quartile of the entire diamonds data set.
+
+# Bivariate Plots Section
+
+```{r echo=FALSE, Correlation_Matrix}
+cor(diamonds[, c(1, 5, 6, 7, 8, 9, 10, 11)])
+```
+ 
+The dimensions of a diamond tend to correlate with each other. The longer one dimension, then the larger the diamond. The dimensions also correlate with carat weight which makes sense. Price correlates strongly with carat weight and the three dimensions (x, y, z).
+ 
+```{r echo=FALSE, Pairs_Panel}
+set.seed(10)
+pairs.panels(sample_n(diamonds[1:11], 1000), pch=".")
+```
+
+I want to look closer at scatter plots involving price and some other variables: carat, table, depth, and volume.
+
+```{r echo=FALSE, Price_vs_Carat}
+qplot(x = carat, y = price, data = diamonds)
+qplot(x = carat, y = price, data = diamonds) +
+  coord_cartesian(xlim = c(0, quantile(diamonds$carat, .99)))
+```
+
+As carat size increases, the variance in price increases. We still see vertical bands where many diamonds take on the same carat value at different price points. The relationship between price and carat appears to be exponential rather than linear.
+
+```{r echo=FALSE, Price_vs_Table}
+qplot(x = table, y = price, data = diamonds)
+```
+
+Again, the tall vertical strips indicate table values are mostly integers. A few outliers below 50 mm and one above 90 mm.
+
+```{r echo=FALSE, Carat_Hist_by_Cut}
+qplot(carat, data = diamonds, binwidth = .01, fill = cut) +
+  coord_cartesian(xlim = c(0, 2)) +
+  guides(fill = guide_legend(reverse = T))
+with(diamonds, by(carat, cut, summary))
+```
+
+It doesn't look like particular cuts have a certain number of carats. It looks like most of the ideal cut diamonds are less than one carat. I'm going to look at those values to be sure.
+
+```{r echo=FALSE, Ideal_Cut_Carat_Values}
+sort(table(subset(diamonds, cut == 'Ideal')$carat), decreasing = T)
+```
+
+Most ideal cut diamonds are under 1.25 carats.
+
+```{r echo=FALSE, Diamond_Counts_by_Cut}
+qplot(cut, data = diamonds, geom="bar", fill=I("#2b8cbe"))
+```
+
+Most diamonds have ideal cut, which is almost double the amount of very good cut diamonds.
+
+```{r echo=FALSE, Price_by_Cut}
+qplot(x = cut, y = price, data = diamonds, geom = 'boxplot')
+by(diamonds$price, diamonds$cut, summary)
+```
+
+Ideal diamonds have the lowest median price. This seems really unusual since I would expect diamonds with an ideal cut to have a higher median price compared to the other groups. There are many outliers. The variation in price tends to increase as cut improves and then decreases for diamonds with ideal cuts. What about price/carat for these cuts?
+
+```{r echo=FALSE, Diamond_Counts_by_Color}
+qplot(color, data = diamonds, geom="bar", fill=I("#2b8cbe"))
+```
+
+Most diamonds have have color ratings between E and H.
+
+```{r echo=FALSE, Price_by_Color}
+qplot(x = color, y = price, data = diamonds, geom = 'boxplot')
+by(diamonds$price, diamonds$color, summary)
+```
+
+Here is another surprise. The lowest median price diamonds have a color of D, which is the best color in the data set. Price variance increases as the color decreases (best color is D and the worst color is J). The median price typically decreases as color improves. Now, I want to look at price per carat by color.
+
+```{r echo=FALSE, Diamond_Counts_by_Clarity}
+qplot(clarity, data = diamonds, geom="bar", fill=I("#2b8cbe"))
+```
+
+Most diamonds have average clarity ratings. Very few diamonds have the worst or best clarity rating, like the rating pattern for color.
+
+```{r echo=FALSE, Price_by_Clarity}
+qplot(x = clarity, y = price, data = diamonds, geom = 'boxplot')
+by(diamonds$price, diamonds$clarity, summary)
+```
+
+Here again, there is a trend that goes against my intuition. The lowest median price occurs for the best clarity (IF). There also to be many more outliers for the better clarity diamonds. I'm not sure why great clarity diamonds are price so low. Another trend to note here is that price variance increases then decreases significantly as the clarity improves.
+
+I want to look at two things: price per clarity, and the distribution of prices for diamonds with best levels of the categorical variables.
+
+```{r echo=FALSE, Price_vs_Depth}
+qplot(x = depth, y = price, data = diamonds)
+ggplot(aes(x = depth, y = price), data = diamonds) +
+  geom_point(alpha = 1/50)
+```
+
+First plot suffers from overplotting. Most diamonds have a depth between 60 and 65 (no units).
+
+```{r echo=FALSE, Price_vs_Better_Volume}
+qplot(x = volume, y = price, data = diamonds)
+```
+
+No volumes that are 0. Still have some outliers, but they are less extreme.
+
+```{r echo=FALSE, Price_vs_Volume_Linear_Model}
+quantile(diamonds$volume, probs = seq(0, 1, 0.01))
+quantile(diamonds$volume, 0.999)
+qplot(x = volume, y = price, color = I('orange'), alpha = I(1/20),
+      data = subset(diamonds,
+                    volume > 0 & volume <= quantile(diamonds$volume, 0.999))) +
+  geom_smooth(method = 'lm', se = T, color = 'blue')
+```
+
+As the volume increases, the variance in price increases. That is, the data becomes more dispersed. The relationship does not look linear and appears more exponential, especially in the original plot of price vs. volume. The linear model would not be a good approximation for price since the model does not accurately predict the price at higher values diamond volumes.
+
+```{r echo=FALSE, Linear_Model}
+volumePriceLM <- lm(price ~ volume,
+                    data = subset(diamonds,
+                                  volume > 0 & volume <= quantile(diamonds$volume, 0.999)))
+summary(volumePriceLM)
+```
+
+Based on the R^2 value, volume explains about 85 percent of the variance in price. Next, I'll look at other variables, including the categorical ones.
+
+# Bivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
+
+Price correlates strongly with carat weight and the three dimensions (x, y, z).
+
+As carat size increases, the variance in price increases. In the plot of price vs carat, there are vertical bands where many diamonds take on the same carat value at different price points. The relationship between price and carat appears to be exponential rather than linear.
+
+Diamonds with better levels of clarity, cut, and color tend to occur more often at lower prices while diamonds with worse levels of clarity, cut, and color tend to occur more often at higher prices.
+
+Ideal diamonds have the lowest median price. This seems really unusual since I would expect diamonds with an ideal cut to have a higher median price compared to the other groups. There are many outliers. The variation in price tends to increase as cut improves and then decreases for diamonds with ideal cuts.
+
+The lowest median priced diamonds have a color of D, which is the best color in the data set. Price variance increases as the color decreases (best color is D and the worst color is J). The median price typically decreases as color improves.
+
+As the volume increases, the variance in price increases. That is, the data becomes more dispersed. The relationship does not look linear and appears exponential, especially in the plot of price vs. volume.
+
+Based on the R^2 value, volume (the product of x, y, and z) explains about 85 percent of the variance in price. Other features of interest can be incorporated into the model to explain the variance in the price.
+
+### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
+
+The dimensions of a diamond (x, y, and z) tend to correlate with each other. The longer one dimension, then the larger the diamond. The dimensions also correlate with carat weight which makes sense.
+
+### What was the strongest relationship you found?
+
+The price of a diamond is positively and strongly correlated with carat and volume. The variables x, y, and z also correlate with the price but less strongly than carat and volume. Either carat or volume could be used in a model to predict the price of diamonds, however, both variables should not be used since they are essentially measuring the same quality and show perfect correlation.
+
+
+# Multivariate Plots Section
+
+
+```{r echo=FALSE, Price_Histograms_by_Qualitative_Factors}
+qplot(price, data = diamonds, binwidth = 0.01,
+      color = cut, geom = 'density') +
+  scale_x_log10(breaks = c(100, 500, 800, 1500, 5000, 10000))
+qplot(price, data = diamonds, binwidth = 0.01,
+      color = color, geom = 'density') +
+  scale_x_log10(breaks = c(100, 500, 800, 1500, 5000, 10000))
+qplot(price, data = diamonds, binwidth = 0.01,
+      color = clarity, geom = 'density') +
+  scale_x_log10(breaks = c(100, 500, 800, 1500, 5000, 10000)) +
+  guides(color = guide_legend(reverse = T))
+```
+
+These density plots explain the odd trends that were seen in the box plots earlier. Diamonds with better levels of clarity, cut, and color tend to occur more often at lower prices while diamonds with worse levels of clarity, cut, and color tend to occur more often at higher prices. I am wondering about price / carat too.
+
+```{r echo=FALSE, Price_Per_Carat_Cut}
+qplot(x = cut, y = price / carat, data = diamonds, geom = 'boxplot')
+qplot(x = cut, y = price / carat, data = diamonds, geom = 'boxplot') +
+  coord_cartesian(ylim = c(0, 6000))
+with(diamonds, by(price / carat, cut, summary))
+```
+
+Wow! Ideal diamonds have the lowest median for price per carat. The variance across the groups seems to be about the same with Fair cut diamonds having the least variation for the middle 50% of diamonds.
+
+```{r echo=FALSE, Price_Per_Carat_Color}
+qplot(x = color, y = price / carat, data = diamonds, geom = 'boxplot')
+with(diamonds, by(price / carat, color, summary))
+```
+
+The best color diamonds (D and E) have the lowest median price. Again, this is such an unusual trend. This also seems strange since most diamonds in the data set are not of color D. I'm going to split up the price / carat distribution by color.
+
+```{r echo=FALSE, Price_Per_Carat_Clarity}
+qplot(x = clarity, y = price / carat, data = diamonds, geom = 'boxplot')
+with(diamonds, by(price / carat, clarity, summary))
+```
+
+This plot seems more reasonable. The lowest median price per carat has clarity I1 which is the lowest clarity rating. The median increases slightly then holds relatively constant before decreasing again for the highest clarity. The variance increases then decreases across the clarity levels from worst to best.
+
+```{r echo=FALSE, Price_Per_Carat_Hist_Color}
+qplot(x = price / carat, data = diamonds, fill = color)
+qplot(x = price / carat, data = diamonds, fill = color) +
+  facet_wrap(~cut)
+```
+
+It looks like the diamonds with better cuts and color tend to have lower price / carat values. This provides some explanation for the odd low median price and price / carat for better cuts and colors, but I'm still not clear on this. I'm going to keep this in mind and try to explore the same plots for clarity.
+
+### Price per Carat Hist by Clarity
+```{r Price_Per_Carat_Hist_Clarity}
+qplot(x = price / carat, data = diamonds, fill = clarity) +
+  guides(fill = guide_legend(reverse = T))
+qplot(x = price / carat, data = diamonds, fill = clarity) +
+  facet_wrap(~cut)
+qplot(x = price / carat, data = diamonds, fill = clarity) +
+  facet_wrap(~color)
+```
+
+The histogram and faceted histograms somewhat explain the odd trends as again there is a greater number of ideal diamonds, color D diamonds, and  clarity IF diamonds in the lower price ranges. Next, I'll look at the price distribution of the higher quality diamonds in cut, color, and clarity.
+
+```{r echo=FALSE, Price_per_Carat_Density}
+qplot(price / carat, data = diamonds, binwidth = 0.01,
+      color = cut, geom = 'density') +
+  scale_x_log10(breaks = c(1000, 2000, 3500, 5000, 10000))
+qplot(price / carat, data = diamonds, binwidth = 0.01,
+      color = color, geom = 'density') +
+  scale_x_log10(breaks = c(1000, 2000, 3500, 5000, 10000))
+qplot(price / carat, data = diamonds, binwidth = 0.01,
+      color = clarity, geom = 'density') +
+  scale_x_log10(breaks = c(1000, 2000, 3000, 4500, 7000, 10000)) +
+  guides(color = guide_legend(reverse = T))
+```
+
+These plots support the variability and trends that the boxplots showed from before. I am going see which variables correlate with price and try to work towards building a linear model to predict price.
+
+```{r echo=FALSE, Price_vs_Table_by_Cut}
+qplot(x = table, y = price, data = diamonds, color = cut)
+qplot(x = table, y = price, data = diamonds, color = cut) +
+  facet_wrap(~clarity)
+qplot(x = table, y = price, data = diamonds, color = cut) +
+  facet_wrap(~color)
+```
+
+Levels of cut cluster by table value. This may make sense based on the type of cut as certain cuts produce certain dimensions. The pattern holds across each level of clarity and each level of color with the exception of the lowest clarity.
+
+```{r echo=FALSE, Price_vs_Table_by_Color}
+qplot(x = table, y = price, data = diamonds, color = color)
+```
+
+Nothing stands out in the plot above.
+
+```{r echo=FALSE, Price_vs_Table_by_Clarity}
+qplot(x = table, y = price, data = diamonds, color = clarity)
+```
+
+Nothing stands out in the plot above.
+
+```{r echo=FALSE, Price_vs_Volume_and_Clarity}
+qplot(y = price, x = volume, data = diamonds, color = clarity) +
+  scale_color_brewer(type = 'div') +
+  scale_y_log10()
+
+# There's the same outliers as before. Look at diamonds with volumes < 1000 and > 0.
+
+qplot(y = price, x = volume,
+      data = subset(diamonds, volume < 1000 & volume > 0), color = clarity) +
+  scale_color_brewer(type = 'div') +
+  scale_y_log10()
+```
+
+Diamonds are priced higher for better clarity holding volume constant.
+
+```{r echo=FALSE, Price_vs_Volume_and_Cut}
+qplot(y = price, x = volume,
+      data = subset(diamonds, volume < 1000 & volume > 0), color = cut) +
+  scale_color_brewer(type = 'div') +
+  scale_y_log10()
+```
+
+I lose the pattern when coloring by cut.
+
+```{r echo=FALSE, Price_vs_Volume_and_Color}
+qplot(y = price, x = volume,
+      data = subset(diamonds, volume < 1000 & volume > 0), color = color) +
+  scale_color_brewer(type = 'div') +
+  scale_y_log10()
+```
+
+Diamonds with better color tend to be priced higher holding volume constant. This trend is not as clear when looking at prive vs volume and clarity, but the trend is still present.
+
+```{r echo=FALSE, cuberoot_transformation}
+cuberoot_trans = function() trans_new('cuberoot',
+                                      transform = function(x) x^(1/3),
+                                      inverse = function(x) x^3)
+```
+
+### Log10 Price and Cube Root of Carat
+```{r echo=FALSE, Use_cuberoot_trans}
+ggplot(aes(carat, price), data = diamonds) + 
+  geom_point() + 
+  scale_x_continuous(trans = cuberoot_trans(), limits = c(0.2, 3),
+                     breaks = c(0.2, 0.5, 1, 2, 3)) + 
+  scale_y_continuous(trans = log10_trans(), limits = c(350, 15000),
+                     breaks = c(350, 1000, 5000, 10000, 15000)) +
+  ggtitle('Price (log10) by Cube-Root of Carat')
+```
+
+### Price vs Carat and Clarity
+```{r echo=FALSE, Price_vs_Carat_and_Clarity}
+ggplot(aes(x = carat, y = price, color = clarity), data = diamonds) + 
+  geom_point(alpha = 0.5, size = 1, position = 'jitter') +
+  scale_color_brewer(type = 'div',
+    guide = guide_legend(title = 'Clarity', reverse = T,
+                         override.aes = list(alpha = 1, size = 2))) +  
+  scale_x_continuous(trans = cuberoot_trans(), limits = c(0.2, 3),
+    breaks = c(0.2, 0.5, 1, 2, 3)) + 
+  scale_y_continuous(trans = log10_trans(), limits = c(350, 15000),
+    breaks = c(350, 1000, 5000, 10000, 15000)) +
+  ggtitle('Price (log10) by Cube-Root of Carat and Clarity')
+```
+
+Holding carat weight constant, diamonds with lower clarity are almost always cheaper than diamonds with better clarity (worst clarity is I1 and best clarity is IF).
+
+### Price vs Carat and Cut
+```{r echo=FALSE, Price_vs_Carat_and_Cut}
+ggplot(aes(x = carat, y = price, color = cut), data = diamonds) + 
+  geom_point(alpha = 0.5, size = 1, position = 'jitter') +
+  scale_color_brewer(type = 'div',
+                     guide = guide_legend(title = 'Cut', reverse = T,
+                                          override.aes = 
+                                            list(alpha = 1, size = 2))) +  
+  scale_x_continuous(trans = cuberoot_trans(), limits = c(0.2, 3),
+                     breaks = c(0.2, 0.5, 1, 2, 3)) + 
+  scale_y_continuous(trans = log10_trans(), limits = c(350, 15000),
+                     breaks = c(350, 1000, 5000, 10000, 15000)) +
+  ggtitle('Price (log10) by Cube-Root of Carat and Cut')
+```
+
+Price does not vary as much on cut holding carat constant; the pattern is not noticeable here.
+
+### Price vs Carat and Color
+```{r echo=FALSE, Price_vs_Carat_and_Color}
+ggplot(aes(x = carat, y = price, color = color), data = diamonds) + 
+  geom_point(alpha = 0.5, size = 1, position = 'jitter') +
+  scale_color_brewer(type = 'div',
+                     guide =guide_legend(title = 'Color',
+                                         override.aes = 
+                                           list(alpha = 1, size = 2))) +  
+  scale_x_continuous(trans = cuberoot_trans(), limits = c(0.2, 3),
+                     breaks = c(0.2, 0.5, 1, 2, 3)) + 
+  scale_y_continuous(trans = log10_trans(), limits = c(350, 15000),
+                     breaks = c(350, 1000, 5000, 10000, 15000)) +
+  ggtitle('Price (log10) by Cube-Root of Carat and Color')
+```
+
+Color does seem to explain some of the variance in price as was the case with the clarity variable.
+
+The last 3 plots suggest that we can build a linear model and use those variables in the linear model to predict the price of a diamond.
+
+
+```{r echo=FALSE, Build_Linear_Model}
+m1 <- lm(I(log(price)) ~ I(carat^(1/3)), data = diamonds)
+m2 <- update(m1, ~ . + carat)
+m3 <- update(m2, ~ . + clarity)
+m4 <- update(m3, ~ . + cut)
+m5 <- update(m4, ~ . + color)
+mtable(m1, m2, m3, m4, m5)
+```
+
+The variables in this linear model can account for 98.4% of the variance in the price of diamonds.
+
+# Multivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
+
+Ideal diamonds also have the lowest median for price per carat. The variance across the groups seems to be about the same with Fair cut diamonds having the least variation for the middle 50% of diamonds.
+
+Holding carat weight constant, diamonds with lower clarity are almost always cheaper than diamonds with better clarity (worst clarity is I1 and best clarity is IF).
+
+The last 3 plots from the Multivariate section suggest that I can build a linear model and use those variables in the model to predict the price of a diamond.
+
+### Were there any interesting or surprising interactions between features?
+
+Levels of cut cluster by table value. This resonates with me because I think certain diamond cuts would produce particular dimensions (x, y, and z). The pattern holds across each level of clarity and each level of color with the exception of the lowest clarity
+
+### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
+
+Yes, I created a linear model using the log10 of Price and the Cube-Root of Carat.
+
+The variables in the linear model account for 98.4% of the variance in the price of diamonds. The addition of the cut variable to the model slightly improves the R^2 value by one tenth of a percent, which is expected based on the visualization above of Log10 Price vs. Cube-Root Carat and Cut.
+
+------
+
+# Final Plots and Summary
+
+### Plot One
+```{r echo=FALSE, Plot_One}
+qplot(price, data = diamonds, binwidth = 0.01, fill = I('#099DD9')) +
+  scale_x_log10(breaks = c(1000, 1500, 10000)) +
+  ggtitle('Log10 Price') +
+  xlab('Price (in dollars)') + 
+  ylab('Number of Diamonds')
+```
+
+### Description One
+The distribution of diamond prices appears to be bimodal, perhaps due to the demand of diamonds and buyers purchasing in two different ranges of price points.
+
+### Plot Two
+```{r echo=FALSE, Plot_Two}
+theme_set(theme_minimal(12))
+plot1 <- qplot(x = clarity, y = price, data = diamonds, geom = 'boxplot',
+      fill = clarity) +
+  ggtitle('Diamond Prices by Cut') +
+  xlab('Clarity') +
+  ylab('Price (in dollars)') +
+  coord_cartesian(ylim = c(0, 7000)) +
+  theme(legend.position = 'none')
+
+plot2 <- qplot(price, data = diamonds, binwidth = 0.01,
+      color = clarity, geom = 'density') +
+  scale_x_log10(breaks = c(1000, 2000, 3000, 4500, 7000, 10000)) +
+  guides(color = guide_legend(reverse = T)) +
+  xlab('Price/Carat ($/ct)') +
+  ylab('Density') +
+  ggtitle('Density of Price/Carat by Clarity')
+
+grid.arrange(plot1, plot2, ncol = 1)
+```
+
+### Description Two
+Diamonds with the best level of clarity (IF) have the lowest median price. A greater proportion of diamonds with the best clarity are priced lowered compared to the proportion of diamonds in other price distributions for worse levels of clarity. Price variance increases as the clarity improves (worst clarity is I1).
+
+### Plot Three
+```{r echo=FALSE, Plot_Three}
+theme_set(theme_minimal(16))
+ggplot(aes(x = carat, y = price, color = clarity), data = diamonds) + 
+  geom_point(alpha = 0.5, size = 1, position = 'jitter') +
+  scale_color_brewer(type = 'div',
+    guide = guide_legend(title = 'Clarity', reverse = T,
+                         override.aes = list(alpha = 1, size = 2))) +  
+  scale_x_continuous(trans = cuberoot_trans(), limits = c(0.2, 3),
+    breaks = c(0.2, 0.5, 1, 2, 3)) + 
+  scale_y_continuous(trans = log10_trans(), limits = c(350, 15000),
+    breaks = c(350, 1000, 5000, 10000, 15000)) +
+  ggtitle('Price (log10) by Cube-Root of Carat and Clarity') +
+  theme(plot.title = element_text(size = 16))
+```
+
+### Description Three
+Holding carat weight constant, diamonds with higher clarity levels (I1 is worst and IF is best) are almost always cheaper than diamonds with better clarity. The plot indicates that a linear model could be constructed to predict the price of variables using log10(price) as the outcome variable and cube-root of carat as the predictor variable
+
+------
+
+# Reflection
+
+The diamonds data set contains information on almost 54,000 thousand diamonds from around 2008. I started by understanding the individual variables in the data set, and then I explored interesting questions and leads as I continued to make observations on plots. Eventually, I explored the price of diamonds across many variables and created a linear model to predict diamond prices. I was surprised that depth or table did not have a strong positive correlation with price, but these variables are likely to be represented by categorical variables: color, cut, and clarity. I struggled understanding the decrease in median price as the level of cut and clarity improved, but this became more clear when I realized that most of the data contained ideal cut diamonds. For the linear model, all diamonds were included since information on price, carat, color, clarity, and cut were available for all the diamonds. Some limitations of this model include the source of the data. Given that the diamonds date to 2008, the model would likely undervalue diamonds in the market today, either due to changes in demand and supply or inflation rates. To investigat this data further, I would examine how values of 0 were introduced into the data set for the variables volume, x, y, and z. I would be interested in testing the linear model to predict current diamond prices and to determine to what extent the model is accurate at pricing diamonds. A more recent data would be better to make predictions of diamond prices, and comparisons might be made between the other linear models to see if other variables may account for diamond prices.

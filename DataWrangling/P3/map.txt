@@ -1,0 +1,5 @@
+I've used area around Everett, WA, USA.
+I've choose this location because I was here during my vacation last year.
+http://www.openstreetmap.org/export#map=10/47.9389/-122.3534
+Overpass API query, to get location data:
+(node(47.7116,-122.4138,48.1028,-121.9187);<;);out meta;

@@ -1,0 +1,201 @@
+---
+title: Red Wine quality exploration 
+author: Sergei Silnov
+output: html_document
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Load all of the packages that you end up using
+# in your analysis in this code chunk.
+
+# Notice that the parameter "echo" was set to FALSE for this code chunk.
+# This prevents the code from displaying in the knitted HTML output.
+# You should set echo=FALSE for all code chunks in your file.
+
+library(ggplot2)
+library(dplyr)
+```
+
+## Introduction
+This document is explanatory data analysis of  Red Wines dataset. This dataset contains chemical/physical properties of wines, unique id-s and quality parameter marked by professionals.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Load_the_Data}
+# Load the Data
+wine <- read.csv('wineQualityReds.csv')
+wt <- tbl_df(wine)
+
+# dimensions and column names
+dim(wt)
+names(wt)
+
+# Basic info
+summary(wt)
+glimpse(wine)
+```
+
+Mean pH of wine id 3.311 and very close to median
+About 75% of wines have residual sugar less than 2.6.
+The median quality of wine is 6, min: 3, max: 8.
+
+# Univariate Plots Section
+```{r echo=FALSE, message=FALSE, warning=FALSE, Univariate_Plots}
+
+# Quality histogram
+p <- ggplot(wine, aes(x=quality))
+p + geom_histogram(binwidth = 1)
+
+qplot(fixed.acidity, data = wine)
+qplot(volatile.acidity, data = wine)
+qplot(citric.acid, data = wine)
+qplot(residual.sugar, data = wine)
+qplot(chlorides, data = wine)
+qplot(free.sulfur.dioxide, data = wine)
+qplot(total.sulfur.dioxide, data = wine)
+qplot(density, data = wine)
+qplot(pH, data = wine)
+qplot(sulphates, data = wine)
+qplot(alcohol, data = wine)
+```
+
+Most wines have qualiti 5 and 6 (Neutral?)
+Only few wines have quality 8, even fewer - 3. There are no wines with quality > 8 or quality < 3.
+
+There are no wines with alc. less 8.5
+Most wines have more than 9% of alcohol 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, alcohol}
+qplot(alcohol, data = wine, binwidth = 0.1)
+qplot(alcohol, data = wine, binwidth = 0.01) +
+  scale_x_log10()
+
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, free.sulfur.dioxide}
+qplot(free.sulfur.dioxide, data = wine)
+qplot(free.sulfur.dioxide, data = wine) +
+  scale_x_log10()
+
+```
+
+# Univariate Analysis
+
+### What is the structure of your dataset?
+There are 1599 vines with 12 features: ( "fixed.acidity", "volatile.acidity", "citric.acid", "residual.sugar", chlorides", "free.sulfur.dioxide", "total.sulfur.dioxide", "density", "pH", "sulphates", "alcohol", "quality" )
+
+Density, pH and quality have distributions visually close to normal
+Fixed Acidity, Residual sugar, Chlorides, Free Sulfur Dioxide, Total Sulfur Dioxide, Suphates 
+1/6 of all samples has citric acid very close to 0
+
+### What is/are the main feature(s) of interest in your dataset?
+Most interesting in this dataset is quality of wine and and basic chemical characteristics (alcohol, pH, sulphates)
+
+### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
+
+### Did you create any new variables from existing variables in the dataset?
+No
+
+### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
+Quality of wine has normal distribution, 
+but sulfur dioxide graphs have heavy tails.
+
+
+# Bivariate Plots Section
+```{r echo=FALSE, message=FALSE, warning=FALSE, Bivariate_Plots}
+
+  cor(wine)
+
+  # wine[total.sulfur.dioxide] - wine[free.sulfur.dioxide]
+  
+```
+
+Most parameters seems to be uncorrelated. There are some correlations ~ 0.67 between fixed.acidity and citric.acid, almost same correlation between free.sulfur.dioxide and total.sulfur.dioxide 
+
+Highest corelation of quality with alcohol is just 0.48
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Alcohol_Sugar}
+
+  qplot(x = alcohol, y = residual.sugar, data = wine)
+  
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Alcohol_Quality}
+  qplot(x = quality, y = alcohol, data = wine)
+  
+```
+
+# Bivariate Analysis
+
+ ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
+Most variables uncorrelated.
+Quality has low correlation with other parameters
+
+### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
+
+
+### What was the strongest relationship you found? 
+There are some correlations ~ 0.67 between fixed.acidity and citric.acid, almost same correlation between free.sulfur.dioxide and total.sulfur.dioxide. Not very strong. 
+Another moment, that best wines have slightly higher averare alcohol.
+
+
+# Multivariate Plots Section
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Multivariate_Plots}
+qplot(x = quality, y = fixed.acidity + volatile.acidity + citric.acid, data = wine)
+qplot(x = alcohol, y = fixed.acidity + volatile.acidity + citric.acid, data = wine)
+qplot(x = pH, y = fixed.acidity + volatile.acidity + citric.acid, data = wine)
+```
+
+# Multivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
+Tends to be that wines with higer sum of acids has lower pH and Alcohol
+
+### Were there any interesting or surprising interactions between features?
+No
+<!---
+### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
+--->
+
+------
+
+# Final Plots and Summary
+
+### Plot One
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_One}
+qplot(quality, data = wine, binwidth = 1, fill = I('#099DD9')) +
+  ggtitle('Histogram of quality of  wines') +
+  xlab('Quality') + 
+  ylab('Number of wines')
+
+```
+
+### Description One
+Distribution of quality of wine. Very close to normal. Experts avoid using low < 3 and high > 8 marks.
+
+### Plot Two
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Two}
+  qplot(pH, data = wine,  fill = factor(quality > 7),
+       geom = 'dotplot') +
+  xlab('pH') +
+  ylab('Counts') +
+  ggtitle('pH Distribution with quality')
+
+```
+
+### Description Two
+Best wines have lower pH
+
+### Plot Three
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Three}
+qplot(x = sulphates, y = density, color = factor(quality), data = wine) + ggtitle('Sulphates over density with quality') 
+```
+
+### Description Three
+Best wines have not very high density with not very high (between 0.5 and 1.5) amount of sulphates.
+
+------
+
+# Reflection
+Dataset contains information about 1599 probes of wines with some information about quality marked by experts. Data is full without visible errors and mistakes. Therea are not too many data to make good predictions based on these parameters. All characteristics not directly related with quality. 
+<!--- Please note that the report is not complete, you will need to include also bivariate, multivariate and final plot sections, obviously you will need to include discussions for each charts etc. --->
