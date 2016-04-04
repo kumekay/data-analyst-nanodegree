@@ -1,0 +1,27 @@
+Code;Description
+A;Infectious and parasitic diseases
+B;Infectious and parasitic diseases
+C;Malignant neoplasms
+D;In situ neoplasms, diseases of blood, blood-forming organs, immune mechanism
+E;Endocrine, nutritional, and metabolic disease
+F;Mental and behavioral disorders
+G;Diseases of the nervous system
+H;Diseases of the eye,adnexa, the ear and mastoid process
+I;Diseases of the circulatory system
+J;Diseases of the respiratory system
+K;Diseases of the digestive system
+L;Diseases of skin and subcutaneous tissue
+M;Diseases of the musculoskeletal system and connective tissue
+N;Diseases of the genitourinary system
+O;Pregnancy, childbirth, and the puerperium
+P;Certain conditions originating in the perinatal period
+Q;Congenital malformations, deformations, and chromosomal abnormalities
+R;Symptoms, signs, and abnormal clinical and laboratory findings, not elsewhere classified
+S;Injury, poisoning, and certain other consequences of external causes
+T;Injury, poisoning, and certain other consequences of external causes
+U;Codes for special purposes
+V;External causes of morbidity and mortality
+W;External causes of morbidity and mortality
+X;External causes of morbidity and mortality
+Y;External causes of morbidity and mortality
+Z;Factors influencing health status and contact with health services

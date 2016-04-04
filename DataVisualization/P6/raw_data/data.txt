@@ -1,0 +1,3 @@
+
+Российская база данных по рождаемости и смертности. Центр демографических исследований Российской экономической школы, Москва (Россия). База данных доступна по адресу http://demogr.nes.ru/index.php/ru/demogr_indicat/data. Данные скачаны 17.11.2015.
+Russian Fertility and Mortality Database. Center for Demographic Research, Moscow (Russia). Available at http://demogr.nes.ru/index.php/ru/demogr_indicat/data (data downloaded on 17 Nov 2015).

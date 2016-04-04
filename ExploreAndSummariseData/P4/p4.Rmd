@@ -14,6 +14,7 @@ output: html_document
 
 library(ggplot2)
 library(dplyr)
+library(gridExtra)
 ```
 
 ## Introduction
@@ -40,24 +41,33 @@ The median quality of wine is 6, min: 3, max: 8.
 # Univariate Plots Section
 ```{r echo=FALSE, message=FALSE, warning=FALSE, Univariate_Plots}
 
-# Quality histogram
-p <- ggplot(wine, aes(x=quality))
-p + geom_histogram(binwidth = 1)
+# Factorize quality
+wine.quality <- factor(wine$quality)
 
-qplot(fixed.acidity, data = wine)
-qplot(volatile.acidity, data = wine)
-qplot(citric.acid, data = wine)
-qplot(residual.sugar, data = wine)
-qplot(chlorides, data = wine)
-qplot(free.sulfur.dioxide, data = wine)
-qplot(total.sulfur.dioxide, data = wine)
-qplot(density, data = wine)
-qplot(pH, data = wine)
-qplot(sulphates, data = wine)
-qplot(alcohol, data = wine)
+# Quality histogram
+qplot(wine.quality)
+
+# Acids
+grid.arrange(
+  qplot(fixed.acidity, data = wine),
+  qplot(volatile.acidity, data = wine),
+  qplot(citric.acid, data = wine)
+)
+
+grid.arrange(
+  qplot(residual.sugar, data = wine),
+  qplot(chlorides, data = wine),
+  qplot(free.sulfur.dioxide, data = wine),
+  qplot(total.sulfur.dioxide, data = wine),
+  qplot(density, data = wine),
+  qplot(pH, data = wine),
+  qplot(sulphates, data = wine),
+  qplot(alcohol, data = wine),
+  ncol = 2
+)
 ```
 
-Most wines have qualiti 5 and 6 (Neutral?)
+Most wines have quality 5 and 6 (Neutral?)
 Only few wines have quality 8, even fewer - 3. There are no wines with quality > 8 or quality < 3.
 
 There are no wines with alc. less 8.5

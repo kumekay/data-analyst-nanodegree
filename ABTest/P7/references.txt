@@ -1,0 +1,2 @@
+http://www.had2know.com/academics/normal-distribution-table-z-scores.html
+https://cran.r-project.org/web/packages/tigerstats/vignettes/qnorm.html

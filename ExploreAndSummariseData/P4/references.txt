@@ -2,3 +2,5 @@ http://docs.ggplot2.org/current/geom_histogram.html
 https://www.rstudio.com/wp-content/uploads/2015/08/ggplot2-cheatsheet.pdf
 https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf
 https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf
+https://cran.r-project.org/web/packages/gridExtra/gridExtra.pdf
+https://stat.ethz.ch/R-manual/R-devel/library/base/html/factor.html
