@@ -1,0 +1,13 @@
+body {
+  font-family: 'Slabo 27px', serif;
+  font-size: 16px;
+  text-align: center;
+}
+
+.chart {
+  margin: 0 auto;
+}
+
+g:first-of-type .dimple-series-0 {
+  cursor: pointer;
+}
