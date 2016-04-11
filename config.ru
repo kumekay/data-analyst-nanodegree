@@ -9,6 +9,6 @@ run lambda { |env|
       'Content-Type'  => 'text/html',
       'Cache-Control' => 'public, max-age=86400'
     },
-    File.open('DataVisualization/P6/index_1.html', File::RDONLY)
+    File.open('DataVisualization/P6/index.html', File::RDONLY)
   ]
 }
