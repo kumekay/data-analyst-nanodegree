@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Main draw function. Called, when data available
   var draw = function(data) {
-    // var color = d3.scale.category20c();
 
     // Setup treemap layout
     var treemap = d3.layout.treemap()
