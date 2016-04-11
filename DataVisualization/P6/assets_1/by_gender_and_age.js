@@ -1,7 +1,6 @@
-var pub;
 document.addEventListener('DOMContentLoaded', function() {
   var svgByGenderAndAge = dimple.newSvg("#by-gender-and-age", 600, 500);
-  d3.json("./data/by_gender_and_age.json", function(dataByGenderAndAge) {
+  d3.json("./data_v1/by_gender_and_age.json", function(dataByGenderAndAge) {
     /**
      * Year switcher chart
      */
@@ -10,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
       dataByGenderAndAge);
 
     // Place the year switcher above main chart
-    switcher.setBounds(50, 50, 500, 30);
+    switcher.setBounds(50, 10, 500, 30);
 
     var y = switcher.addMeasureAxis("y", "Deaths");
     y.hidden = true;
@@ -34,9 +33,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var idleColor = "#ccc";
     var activeColor = "#99f";
 
+    // Move labels inside
     x.shapes.selectAll("text")
       .attr("transform", "translate(0, -25)");
 
+    // Set initial active color and switcher style
     sS.shapes
       .attr("rx", 5)
       .attr("ry", 5)
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var chartByGenderAndAge = new dimple.chart(svgByGenderAndAge,
       dataByGenderAndAge);
     // Set Chart and Legend sizes
-    chartByGenderAndAge.setBounds(50, 100, 500, 300);
+    chartByGenderAndAge.setBounds(50, 60, 500, 340);
     chartByGenderAndAge.addLegend(
       50, 450, 500, 100, "left");
 

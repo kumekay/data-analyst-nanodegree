@@ -1,37 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Mortality in Russia 2011-2014</title>
-        <script type="text/javascript" src="assets/d3.js"></script>
-        <script type="text/javascript" src="assets/dimple.v2.1.6.js"></script>
-        <script type="text/javascript" src="assets_1/app.js"></script>
-        <link href='https://fonts.googleapis.com/css?family=Slabo+27px' rel='stylesheet' type='text/css'>
-        <link href="assets_1/style.css" media="screen" rel="stylesheet" type="text/css">
-    </head>
-    <body>
-      <h1>Mortality in Russia 2011-2014</h1>
-      <h2>Mortality structure by gender and age</h2>
-      <div class="chart" id="by-gender-and-age">
-      <!-- </div>
-      <h2>Mortality structure by cause of death</h2>
-      <div class="chart" id="by-cause">
 
+<head>
+  <meta charset="utf-8">
+  <title>Mortality in Russia 2011-2014</title>
+  <script type="text/javascript" src="assets/d3.js"></script>
+  <script type="text/javascript" src="assets/dimple.v2.1.6.js"></script>
+  <script type="text/javascript" src="assets/d3-queue.v2.min.js"></script>
+  <script type="text/javascript" src="assets_1/by_gender_and_age.js"></script>
+  <script type="text/javascript" src="assets_1/by_cause.js"></script>
+  <link href='https://fonts.googleapis.com/css?family=Slabo+27px' rel='stylesheet' type='text/css'>
+  <link href="assets_1/style.css" media="screen" rel="stylesheet" type="text/css">
+  <!-- For development -->
+  <script src="http://localhost:35729/livereload.js"></script>
+</head>
+
+<body>
+  <h1>Mortality in Russia 2011-2014</h1>
+
+  <blockquote>Yes, man is mortal, but that would be only half the trouble. The worst of it is that he's sometimes unexpectedly mortal - there's the trick!
+    <div class="author">
+      The Master and Margarita, Mikhail Bulgakov
+    </div>
+  </blockquote>
+
+  <h2>Mortality structure by gender and age</h2>
+      <div class="chart" id="by-gender-and-age">
       </div>
 
-      <h2>Mortality by external causes
-        <br>
-        <small>(don't worry about terrorism)</small>
-      </h2>
+  <h2>Mortality structure by cause of death 2011-2014</h2>
 
-      <div class="chart" id="external_causes">
-      </div> -->
-      <footer>
-        created by Sergei Silnov <a href="https://twitter.com/@kumekay">@kumekay</a>
-        <br>
-        <a href="mailto:po@kumekay.com?subject=Mortality_in_Russia">po@kumekay.com</a>
-        <br>
-        source code at <a href="https://github.com/pinya/">GitHub</a>
-      </footer>
-    </body>
+  <div class="chart" id="by-cause">
+    <form>
+      <label>
+        <input type="radio" name="mode" value=0 checked>All</label>
+      <label>
+        <input type="radio" name="mode" value=1>Females</label>
+      <label>
+        <input type="radio" name="mode" value=2>Males</label>
+    </form>
+    <div class="visualization">
+
+    </div>
+  </div>
+
+  <a href="http://www.icd10data.com">Find more details about IDC-10 codes</a>
+
+  <div class="chart" id="external_causes">
+  </div>
+  <footer>
+    created by Sergei Silnov <a href="https://twitter.com/@kumekay">@kumekay</a>
+    <br>
+    <a href="mailto:po@kumekay.com?subject=Mortality_in_Russia_Visualization">po@kumekay.com</a>
+    <br> source code at <a href="https://github.com/pinya/data-analyst-nanodegree/tree/master/DataVisualization/P6">GitHub</a>
+  </footer>
+</body>
+
 </html>

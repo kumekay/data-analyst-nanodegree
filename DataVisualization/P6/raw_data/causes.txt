@@ -283,10 +283,9 @@ C50
 Malignant neoplasm of cervix uteri
 C53
 72
-Злокачественные новообразования тела матки,
+Злокачественные новообразования тела матки, матки, других и неуточненных частей матки
 Malignant neoplasm of corpus uteri and of uterus, part unspecified
 C54,C55
-матки, других и неуточненных частей матки
 73
 Злокачественные новообразования яичника
 Malignant neoplasm of ovary
@@ -398,7 +397,7 @@ F103,F106,F108,F109
 100
 Алкогольные психозы, энцефалопатия, слабоумие
 Alcoholic psychosis, encephalopathy, dementia
-F104-5,F106(чACTь)F107
+F104-5,F106F107
 101
 Другие психозы
 Other psychoses
@@ -406,14 +405,15 @@ F00-F09,F20-F29
 102
 Психические и поведенческие расстройства в результате злоупотребления наркотиками и другими психоактивными веществами
 Mental and behavioural disorders due to drug use and use of other psychoactive substances
-F11,F12,F14,F13(чACTь),F15(чACTь),F16(чACTь),F19(чACTь)
+F11,F12,F14,F13,F15,F16,F19
 103
 Психические и поведенческие расстройства в результате злоупотребления другими психоактивными веществами
 Mental and behavioural disorders due to use of other psychoactive substances
-F17,F13(чACTь),F15(чACTь),F16(чACTь),F19(чACTь)
+F17,F13,F15,F16,F19
 104
 Умственная отсталость
 Mental retardation
+F?
 105
 Другие психические и поведенческие расстройства
 Other mental and behavioural disorders
@@ -679,10 +679,9 @@ J60-J70
 Other respiratory diseases principally affecting the interstitium
 J80-J84
 171
-Гнойные и некротические состояния нижних дыхательных путей (абсцесс легкого и средостения, гангрена и некроз легкого, абсцесс
+Гнойные и некротические состояния нижних дыхательных путей (абсцесс легкого и средостения, гангрена и некроз легкого, абсцесс легкого с пневмонией, эмпиема)
 Suppurative and necrotic conditions of lower respiratory tract
 J85-J86
-легкого с пневмонией, эмпиема)
 172
 Другие болезни органов дыхания
 Other diseases of respiratory system
