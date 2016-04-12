@@ -1,3 +1,6 @@
 [submodule "ABTest/P7"]
 	path = ABTest/P7
 	url = https://pinya@github.com/pinya/p7.git
+[submodule "ExploreAndSummariseData/P4"]
+	path = ExploreAndSummariseData/P4
+	url = https://pinya@github.com/pinya/p4.git
